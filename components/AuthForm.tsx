@@ -42,7 +42,7 @@ const AuthForm = ({ type }: { type: FormType }) => {
       email: "",
     },
   });
-  //   2. Define a submit handler.
+  //   this happens when you click on the submit button.
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setIsLoading(true);
     setError("");
