@@ -189,7 +189,8 @@ export const constructDownloadUrl = (bucketFileId: string) => {
 };
 
 // DASHBOARD UTILS
-export const getUsageSummary = (totalSpace: any) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const getUsageSummary = (totalSpace : any) => {
   return [
     {
       title: 'Documents',
