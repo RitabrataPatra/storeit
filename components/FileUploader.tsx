@@ -7,6 +7,10 @@ import Image from "next/image";
 import { getFileType } from "@/lib/utils";
 import Thumbnail from "./Thumbnail";
 import { Loader } from "lucide-react";
+import { MAX_FILE_SIZE } from "@/constants";
+import { useToast } from "@/hooks/use-toast";
+import { uploadFile } from "@/lib/actions/file.action";
+import { usePathname } from "next/navigation";
 
 interface Props {
   ownerId: string;
@@ -15,11 +19,37 @@ interface Props {
 }
 
 const FileUploader = ({ ownerId, accountId, className }: Props) => {
+  const path = usePathname();
+  const {toast} = useToast();
   const [files, setfiles] = useState<File[]>([]);
-  const onDrop = useCallback((acceptedFiles: File[]) => {
+  const onDrop = useCallback(async(acceptedFiles: File[]) => {
     setfiles(acceptedFiles);
-  }, []);
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
+
+    const uploadPromises = acceptedFiles.map
+    (async(file)=>{
+      if (file.size > MAX_FILE_SIZE) {
+        setfiles((prevFiles)=>prevFiles.filter((f)=>f.name !== file.name));
+
+        return toast({
+          title : `Your file size : ${Math.round(file.size /1024 / 1024)} MB`,
+          description : `${file.name} is too large.
+                          Keep the file size under 48MB`,
+          variant : "destructive"
+        })
+      }
+      return uploadFile({file , ownerId , accountId , path })
+      .then((uploadedFile)=>{
+        if(uploadedFile){
+          setfiles((prevFiles)=>prevFiles.filter((f)=>f.name !== file.name));
+        }
+      })
+      ;
+    });
+    
+    await Promise.all(uploadPromises)
+    //only upload files if userId , accountId or image path changes
+  }, [ownerId , accountId , path]);
+  const { getRootProps, getInputProps} = useDropzone({ onDrop });
 
   const handleRemove = (
     fileName : string , 
@@ -78,11 +108,6 @@ const FileUploader = ({ ownerId, accountId, className }: Props) => {
             );
           })}
         </ul>
-      )}
-      {isDragActive ? (
-        <p>Drop the files here ...</p>
-      ) : (
-        <p>Drag and drop some files here, or click to select files</p>
       )}
     </div>
   );
