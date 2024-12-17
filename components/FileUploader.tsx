@@ -19,8 +19,9 @@ interface Props {
 }
 
 const FileUploader = ({ ownerId, accountId, className }: Props) => {
-  const path = usePathname();
   const {toast} = useToast();
+  const path = usePathname();
+  
   const [files, setfiles] = useState<File[]>([]);
   const onDrop = useCallback(async(acceptedFiles: File[]) => {
     setfiles(acceptedFiles);

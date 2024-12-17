@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useTransition } from "react";
 
 import {
   AlertDialog,
@@ -32,6 +32,7 @@ const OtpModal = ({
   const [isOpen, setisOpen] = useState(true);
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isPending, setIsPending] = useTransition();
 
   const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -40,12 +41,17 @@ const OtpModal = ({
       //CALL API TO VERIFY OTP
       const sessionId = await verifySecret({ accountId, password });
       if (sessionId) {
-        router.push("/");
+        setIsPending(() => {
+          router.push("/");
+        })
+        
       }
     } catch (error) {
       console.error("Failed to verify OTP", error);
+    }finally{
+     setIsLoading(false); 
     }
-    setIsLoading(false);
+    
   };
 
   const handleResend = async () => {
@@ -94,7 +100,7 @@ const OtpModal = ({
               className="shad-submit-btn h-12"
             >
               Submit
-              {isLoading && (
+              {isLoading || isPending && (
                 <Image
                   src="/assets/icons/loader.svg"
                   width={24}
