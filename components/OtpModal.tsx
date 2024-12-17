@@ -37,12 +37,16 @@ const OtpModal = ({
   const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     setIsLoading(true);
+    // console.time("VerifySecret");
     try {
       //CALL API TO VERIFY OTP
       const sessionId = await verifySecret({ accountId, password });
+      // console.timeEnd("verifySecret")
       if (sessionId) {
+        // console.time("RouterPush");
         setIsPending(() => {
           router.push("/");
+          // console.timeEnd("RouterPush");
         })
         
       }
@@ -121,6 +125,7 @@ const OtpModal = ({
               >
                 Click to resend OTP
               </Button>
+              <p className="text-xs text-rose-600 underline">*Even if you do not see the loading icon, please wait for 4 to 5 seconds after submitting OTP</p>
             </div>
           </div>
         </AlertDialogFooter>
