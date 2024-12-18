@@ -22,7 +22,7 @@ const AlertComp = () => {
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
           <AlertTitle>
-            In vercel, you can only upload files less than 4.5mb. This is a vercel limit!
+            In vercel, you can only upload files less than 4.5mb. This is a vercel limit !
           </AlertTitle>
         </Alert>
       )}
