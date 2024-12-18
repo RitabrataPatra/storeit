@@ -131,3 +131,23 @@ export const deleteFile = async({bucketFileId ,fileId , path} : DeleteFileProps)
     handleError(error , "Failed to delete file")
   }
 }
+
+
+export const updateFileUsers =async ({emails ,  fileId , path} : UpdateFileUsersProps)=>{
+  const {databases} = await createAdminClient();
+  try {
+    const updatedFile = await databases.updateDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.filesCollectionId,
+      fileId,
+      {
+        users : emails
+      }
+    )
+    revalidatePath(path)
+    return parseStringify(updatedFile)
+  } catch (error) {
+    handleError(error , "Failed to rename file")
+  }
+
+}

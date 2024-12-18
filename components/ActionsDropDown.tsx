@@ -26,9 +26,9 @@ import { constructDownloadUrl } from "@/lib/utils";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { LoaderCircle } from "lucide-react";
-import { deleteFile, renameFile } from "@/lib/actions/file.action";
+import { deleteFile, renameFile, updateFileUsers } from "@/lib/actions/file.action";
 import { usePathname } from "next/navigation";
-import { FileDetails } from "./ActionsModalContent";
+import { FileDetails, ShareInput } from "./ActionsModalContent";
 
 const ActionsDropDown = ({ file }: { file: Models.Document }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -36,6 +36,7 @@ const ActionsDropDown = ({ file }: { file: Models.Document }) => {
   const [action, setAction] = useState<ActionType | null>(null);
   const [name, setName] = useState(file.name);
   const [isLoading, setIsLoading] = useState(false);
+  const [emails, setEmails] = useState<string[]>([]);
   const path = usePathname();
 
   const closeAllModals = () => {
@@ -51,10 +52,23 @@ const ActionsDropDown = ({ file }: { file: Models.Document }) => {
     setIsLoading(true);
     let success = false;
     const actionsObject = {
-      rename : ()=> renameFile({fileId : file.$id , name , extension : file.extension , path : path}),
-      share : ()=> {},
-      delete : ()=> deleteFile({bucketFileId : file.bucketFileId , fileId : file.$id , path : path}),
-    }
+      rename: () =>
+        renameFile({
+          fileId: file.$id,
+          name,
+          extension: file.extension,
+          path: path,
+        }),
+
+      share: () => updateFileUsers({ fileId: file.$id, emails, path: path }),
+
+      delete: () =>
+        deleteFile({
+          bucketFileId: file.bucketFileId,
+          fileId: file.$id,
+          path: path,
+        }),
+    };
     success = await actionsObject[action.value as keyof typeof actionsObject]();
 
     if(success) closeAllModals();
@@ -84,6 +98,14 @@ const ActionsDropDown = ({ file }: { file: Models.Document }) => {
               />
             </DialogDescription>
           )}
+          {/* if you click on share */}
+          {
+            value === "share" &&(
+             <>
+             <ShareInput file={file} onInputChange={setEmails} onRemove={handleRemoveUsers} />
+             </>
+            )} 
+          
           {/* if you click on details */}
           {value === "details" && <FileDetails file={file} />}
            {/* if you click on delete */}
@@ -112,6 +134,14 @@ const ActionsDropDown = ({ file }: { file: Models.Document }) => {
       </DialogContent>
     );
   };
+
+  const handleRemoveUsers = () =>{
+    //remove users todo
+  }
+
+
+
+
   return (
     <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
       <DropdownMenu open={isDropDownOpen} onOpenChange={setIsDropDownOpen}>
