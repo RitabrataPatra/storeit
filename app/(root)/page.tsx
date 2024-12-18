@@ -10,6 +10,8 @@ import { getFiles, getTotalSpaceUsed } from "@/lib/actions/file.action";
 import { convertFileSize, getUsageSummary } from "@/lib/utils";
 import ActionsDropDown from "@/components/ActionsDropDown";
 
+
+
 const Dashboard = async () => {
   // Parallel requests
   const [files, totalSpace] = await Promise.all([
@@ -19,7 +21,7 @@ const Dashboard = async () => {
 
   // Get usage summary
   const usageSummary = getUsageSummary(totalSpace);
-
+  
   return (
     <div className="dashboard-container">
       <section>

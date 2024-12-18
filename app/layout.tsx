@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
+
+
 import "./globals.css";
+import AlertComp from "@/components/AlertComp";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -22,9 +25,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body
-        className={`${poppins.variable} font-poppins antialiased`}
-      >
+      <body className={`${poppins.variable} font-poppins antialiased`}>
+        <AlertComp/>
         {children}
       </body>
     </html>
