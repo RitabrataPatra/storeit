@@ -99,7 +99,7 @@ const ActionsDropDown = ({ file }: { file: Models.Document }) => {
           <DialogTitle className="text-center text-light-100">
             {label}
           </DialogTitle>
-           {/* if you click on rename */}
+          {/* if you click on rename */}
           {value === "rename" && (
             <DialogDescription className="text-center text-light-100">
               <Input
@@ -111,17 +111,28 @@ const ActionsDropDown = ({ file }: { file: Models.Document }) => {
             </DialogDescription>
           )}
           {/* if you click on share */}
-          {
-            value === "share" &&(
-             <>
-             <ShareInput file={file} onInputChange={setEmails} onRemove={handleRemoveUsers} />
-             </>
-            )} 
-          
+          {value === "share" && (
+            <>
+              <ShareInput
+                file={file}
+                onInputChange={setEmails}
+                onRemove={handleRemoveUsers}
+              />
+            </>
+          )}
+
           {/* if you click on details */}
           {value === "details" && <FileDetails file={file} />}
-           {/* if you click on delete */}
-         
+          {/* if you click on delete */}
+          {value === "delete" && (
+            <div className="flex flex-col text-center">
+              <p className="subtitle-2 text-light-100">
+                You are about to delete{" "}
+                <span className="font-bold text-brand-100">{file.name}</span>.
+              </p>
+              <p className="subtitle-2">Are you sure ?</p>
+            </div>
+          )}
         </DialogHeader>
         {["rename", "share", "delete"].includes(value) && (
           <DialogFooter className="flex flex-col gap-3 md:flex-row">
