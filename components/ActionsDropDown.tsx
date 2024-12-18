@@ -53,7 +53,7 @@ const ActionsDropDown = ({ file }: { file: Models.Document }) => {
     const actionsObject = {
       rename : ()=> renameFile({fileId : file.$id , name , extension : file.extension , path : path}),
       share : ()=> {},
-      delete : ()=> {deleteFile({bucketFileId : file.bucketFileId , fileId : file.$id , path : path})},
+      delete : ()=> deleteFile({bucketFileId : file.bucketFileId , fileId : file.$id , path : path}),
     }
     success = await actionsObject[action.value as keyof typeof actionsObject]();
 
