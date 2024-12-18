@@ -26,7 +26,7 @@ import { constructDownloadUrl } from "@/lib/utils";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { LoaderCircle } from "lucide-react";
-import { renameFile } from "@/lib/actions/file.action";
+import { deleteFile, renameFile } from "@/lib/actions/file.action";
 import { usePathname } from "next/navigation";
 import { FileDetails } from "./ActionsModalContent";
 
@@ -53,7 +53,7 @@ const ActionsDropDown = ({ file }: { file: Models.Document }) => {
     const actionsObject = {
       rename : ()=> renameFile({fileId : file.$id , name , extension : file.extension , path : path}),
       share : ()=> {},
-      delete : ()=> {},
+      delete : ()=> {deleteFile({bucketFileId : file.bucketFileId , fileId : file.$id , path : path})},
     }
     success = await actionsObject[action.value as keyof typeof actionsObject]();
 
@@ -73,6 +73,7 @@ const ActionsDropDown = ({ file }: { file: Models.Document }) => {
           <DialogTitle className="text-center text-light-100">
             {label}
           </DialogTitle>
+           {/* if you click on rename */}
           {value === "rename" && (
             <DialogDescription className="text-center text-light-100">
               <Input
@@ -83,8 +84,10 @@ const ActionsDropDown = ({ file }: { file: Models.Document }) => {
               />
             </DialogDescription>
           )}
-
+          {/* if you click on details */}
           {value === "details" && <FileDetails file={file} />}
+           {/* if you click on delete */}
+         
         </DialogHeader>
         {["rename", "share", "delete"].includes(value) && (
           <DialogFooter className="flex flex-col gap-3 md:flex-row">
@@ -95,6 +98,7 @@ const ActionsDropDown = ({ file }: { file: Models.Document }) => {
             >
               Cancel
             </Button>
+            {/* //Submit (delete , rename , share)button */}
             <Button onClick={handleAction} className="modal-submit-button">
               <p className="capitalize">{value}</p>
               {isLoading && (
