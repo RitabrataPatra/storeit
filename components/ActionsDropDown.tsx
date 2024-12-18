@@ -77,6 +77,18 @@ const ActionsDropDown = ({ file }: { file: Models.Document }) => {
 
   };
 
+  const handleRemoveUsers = async(email : string) =>{
+    //remove users todo
+    const updatedEmails = emails.filter((e)=>e !== email);
+    const success = await updateFileUsers({
+      fileId: file.$id,
+      emails: updatedEmails,
+      path: path
+    })
+    if(success) setEmails(updatedEmails);
+    closeAllModals();
+  }
+
   const renderDialogContent = () => {
     if (!action) return null;
     const { value, label } = action;
@@ -135,9 +147,7 @@ const ActionsDropDown = ({ file }: { file: Models.Document }) => {
     );
   };
 
-  const handleRemoveUsers = () =>{
-    //remove users todo
-  }
+  
 
 
 
