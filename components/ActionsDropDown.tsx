@@ -26,6 +26,9 @@ import { constructDownloadUrl } from "@/lib/utils";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { LoaderCircle } from "lucide-react";
+import { renameFile } from "@/lib/actions/file.action";
+import { usePathname } from "next/navigation";
+import { FileDetails } from "./ActionsModalContent";
 
 const ActionsDropDown = ({ file }: { file: Models.Document }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -33,6 +36,7 @@ const ActionsDropDown = ({ file }: { file: Models.Document }) => {
   const [action, setAction] = useState<ActionType | null>(null);
   const [name, setName] = useState(file.name);
   const [isLoading, setIsLoading] = useState(false);
+  const path = usePathname();
 
   const closeAllModals = () => {
     setIsModalOpen(false);
@@ -43,7 +47,20 @@ const ActionsDropDown = ({ file }: { file: Models.Document }) => {
   };
 
   const handleAction = async () => {
+    if(!action) return;
     setIsLoading(true);
+    let success = false;
+    const actionsObject = {
+      rename : ()=> renameFile({fileId : file.$id , name , extension : file.extension , path : path}),
+      share : ()=> {},
+      delete : ()=> {},
+    }
+    success = await actionsObject[action.value as keyof typeof actionsObject]();
+
+    if(success) closeAllModals();
+    setIsLoading(false);
+    // router.refresh();
+
   };
 
   const renderDialogContent = () => {
@@ -66,6 +83,8 @@ const ActionsDropDown = ({ file }: { file: Models.Document }) => {
               />
             </DialogDescription>
           )}
+
+          {value === "details" && <FileDetails file={file} />}
         </DialogHeader>
         {["rename", "share", "delete"].includes(value) && (
           <DialogFooter className="flex flex-col gap-3 md:flex-row">

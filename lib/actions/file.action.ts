@@ -89,3 +89,45 @@ export const  getFiles = async() => {
     handleError(error , "Failed to get files")
   }
 }
+
+export const renameFile =async ({name , extension , fileId , path} : RenameFileProps)=>{
+  const {databases} = await createAdminClient();
+  try {
+    const newName = `${name}.${extension}`
+    const updatedFile = await databases.updateDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.filesCollectionId,
+      fileId,
+      {
+        name : newName
+      }
+    )
+    revalidatePath(path)
+    return parseStringify(updatedFile)
+  } catch (error) {
+    handleError(error , "Failed to rename file")
+  }
+
+}
+
+
+export const deleteFile = async({bucketFileId ,fileId , path} : DeleteFileProps) =>{
+  const {databases , storage} = await createAdminClient();
+  try {
+    const deletedFile = await databases.deleteDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.filesCollectionId,
+      fileId
+    );
+    if(deletedFile){
+      await storage.deleteFile(
+        appwriteConfig.bucketId,
+        bucketFileId
+      )
+    }
+    revalidatePath(path)
+    return parseStringify(deletedFile)
+  } catch (error) {
+    handleError(error , "Failed to delete file")
+  }
+}
